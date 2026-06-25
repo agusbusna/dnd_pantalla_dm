@@ -1,0 +1,446 @@
+/* ─── Bestiary.module.css ──────────────────────────────────────────────────── */
+
+/* Panel contenedor principal */
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+/* Header del panel */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+.panelHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnNew {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnNew:hover { background: rgba(201,168,76,0.28); }
+
+.btnClose {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+  color: var(--text-3);
+  font-size: 13px;
+  cursor: pointer;
+}
+.btnClose:hover { color: var(--text-1); background: var(--bg-hover); }
+
+/* ─── Búsqueda y filtros ─────────────────────────────────────────────────── */
+
+.searchBar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  color: var(--text-1);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+.searchInput:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+}
+
+.filterTabs {
+  display: flex;
+  gap: 4px;
+}
+
+.filterTab {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 10px;
+  color: var(--text-3);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.filterTab:hover { color: var(--text-1); border-color: var(--border-md); }
+
+.filterTabActive {
+  background: var(--gold-glow);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* ─── Lista de criaturas ─────────────────────────────────────────────────── */
+
+.list {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+/* Fila de criatura */
+.creatureRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.creatureRow:last-child { border-bottom: none; }
+.creatureRow:hover { background: var(--bg-hover); }
+
+/* Borde izquierdo por tipo */
+.type_enemy  { border-left: 3px solid #c0392b; }
+.type_ally   { border-left: 3px solid #27ae60; }
+.type_player { border-left: 3px solid #2980b9; }
+
+/* Info de la criatura */
+.creatureInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.creatureName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spellTag {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.creatureMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+/* Badge de tipo */
+.typeBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+.badge_enemy  { background: var(--red-dim);   color: #e74c3c; border: 1px solid rgba(192,57,43,0.35); }
+.badge_ally   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(39,174,96,0.35); }
+.badge_player { background: var(--blue-dim);  color: var(--blue); border: 1px solid rgba(41,128,185,0.35); }
+
+/* Stats inline */
+.stat {
+  font-size: 11px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.statL {
+  font-size: 9px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 1px;
+}
+
+/* ─── Controles de la fila ───────────────────────────────────────────────── */
+
+.creatureControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Grupo cantidad + añadir */
+.addGroup {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.countBtn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-md);
+  border-radius: 3px;
+  width: 22px;
+  height: 22px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.countBtn:hover:not(:disabled) { color: var(--text-1); }
+.countBtn:disabled { opacity: 0.3; cursor: default; }
+
+.countInput {
+  width: 36px;
+  text-align: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: 3px;
+  padding: 2px 4px;
+  color: var(--text-1);
+  font-size: 12px;
+}
+/* Ocultar flechas del input number */
+.countInput::-webkit-inner-spin-button,
+.countInput::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.btnAddCombat {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btnAddCombat:hover { background: rgba(201,168,76,0.28); }
+
+/* Grupo editar/eliminar */
+.crudGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.btnEdit {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 7px;
+  color: var(--text-3);
+  font-size: 12px;
+  cursor: pointer;
+}
+.btnEdit:hover { color: var(--text-1); border-color: var(--border-md); background: var(--bg-hover); }
+
+.btnDelete {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 7px;
+  color: var(--text-3);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btnDelete:hover { color: #e74c3c; border-color: rgba(192,57,43,0.5); }
+
+.btnDeleteConfirm {
+  background: var(--red-dim);
+  border-color: rgba(192,57,43,0.5);
+  color: #e74c3c;
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.panelFooter {
+  padding: 6px 16px;
+  font-size: 11px;
+  color: var(--text-3);
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+
+/* ─── Formulario de criatura ─────────────────────────────────────────────── */
+
+.formPanel {
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+}
+
+.formTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 12px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formField label {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.formField input,
+.formField select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  color: var(--text-1);
+  font-size: 13px;
+}
+
+.formField input:focus,
+.formField select:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+}
+
+/* Checkbox */
+.checkField {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding-top: 18px;
+}
+
+.checkLabel {
+  font-size: 12px;
+  color: var(--text-1) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  cursor: pointer;
+}
+
+/* Spell slots en formulario */
+.spellSection {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.spellTitle {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.spellGrid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.spellField {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.spellField label {
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.spellField input {
+  width: 40px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-md);
+  border-radius: 3px;
+  padding: 3px;
+  color: var(--text-1);
+  font-size: 12px;
+}
+
+/* Acciones del formulario */
+.formActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnSave {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnSave:hover:not(:disabled) { background: rgba(201,168,76,0.28); }
+.btnSave:disabled { opacity: 0.4; cursor: default; }
+
+.btnCancel {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+.btnCancel:hover { background: var(--bg-hover); color: var(--text-1); }

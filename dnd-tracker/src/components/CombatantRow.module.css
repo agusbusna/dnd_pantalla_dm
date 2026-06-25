@@ -1,0 +1,233 @@
+.row {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 6px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.row:hover { border-color: var(--border-md); }
+.row.active { border-color: var(--gold-dim); box-shadow: 0 0 0 1px var(--gold-dim) inset; }
+.row.dead { opacity: .4; }
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.header:hover { background: rgba(255,255,255,0.02); }
+
+.initBadge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+.type_player { background: var(--green-dim);color: #2ecc71; border-color: rgba(39,174,96,0.4); }
+.type_enemy  { background: var(--red-dim);  color: #e74c3c; border-color: rgba(192,57,43,0.4); }
+.type_ally   { background: var(--blue-dim); color: #5dade2; border-color: rgba(41,128,185,0.4); }
+
+.nameBlock { flex: 1; min-width: 0; }
+.name {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.activeDot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+  flex-shrink: 0;
+}
+.deadTag { font-size: 12px; color: var(--red); }
+.condSummary { font-size: 11px; color: var(--amber); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.hpBlock { width: 300px; flex-shrink: 0; }
+.hpText { font-size: 20px; display: flex; gap: 1px; align-items: baseline; margin-bottom: 3px; }
+.hpMax { color: var(--text-3); font-size: 11px; }
+.hpBarBg { height: 15px; background: var(--bg-hover); overflow: hidden; }
+.hpBarFill { height: 100%; transition: width .3s, background .3s; }
+
+.chips { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
+.chip {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-size: 12px;
+  display: flex; gap: 4px; align-items: center;
+}
+.chipL { color: var(--text-3); font-size: 10px; }
+
+.caret { color: var(--text-3); font-size: 10px; margin-left: 4px; flex-shrink: 0; }
+
+/* Detail */
+.detail { padding: 0 12px 12px; border-top: 1px solid var(--border); }
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.fullWidth { grid-column: 1 / -1; }
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.cardTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fieldRow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.fieldRow label { font-size: 12px; color: var(--text-2); min-width: 70px; }
+
+.dmgRow { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.btnDmg, .btnHeal, .btnSmall {
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.btnDmg  { background: var(--red-dim); border: 1px solid rgba(192,57,43,.4); color: #e74c3c; }
+.btnDmg:hover  { background: rgba(192,57,43,.4); }
+.btnHeal { background: var(--green-dim); border: 1px solid rgba(39,174,96,.4); color: #2ecc71; }
+.btnHeal:hover { background: rgba(39,174,96,.35); }
+.btnSmall { background: var(--bg-hover); border: 1px solid var(--border-md); color: var(--text-2); }
+.btnSmall:hover { color: var(--text-1); }
+
+/* Conditions */
+.condWrap { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; min-height: 24px; }
+.noConditions { font-size: 12px; color: var(--text-3); }
+.condTag {
+  background: var(--amber-dim);
+  border: 1px solid rgba(230,126,34,.4);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--amber);
+  cursor: pointer;
+}
+.condTag:hover { background: rgba(230,126,34,.35); }
+.condAdd { display: flex; gap: 6px; }
+
+/* Spell slots */
+.slotReset {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.slotReset:hover { color: var(--text-1); }
+
+.slotGrid { display: flex; gap: 10px; flex-wrap: wrap; }
+.slotCol { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.slotLvl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
+.slotCount { font-size: 12px; font-weight: 500; color: var(--purple); }
+.pips { display: flex; gap: 3px; flex-direction: row; flex-wrap: wrap; max-width: 60px; justify-content: center; }
+
+.pip {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 1px solid var(--border-md);
+  cursor: pointer;
+  transition: all .15s;
+}
+.pipAvail { background: #8e44ad; border-color: #9b59b6; }
+.pipAvail:hover { background: #9b59b6; }
+.pipUsed  { background: var(--bg-hover); opacity: .4; }
+
+/* Actions */
+.actions { display: flex; gap: 8px; margin-top: 10px; }
+
+.btnKill, .btnRevive, .btnRemove {
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  font-size: 12px;
+}
+.btnKill   { background: var(--red-dim); border: 1px solid rgba(192,57,43,.4); color: #e74c3c; }
+.btnKill:hover { background: rgba(192,57,43,.4); }
+.btnRevive { background: var(--green-dim); border: 1px solid rgba(39,174,96,.4); color: #2ecc71; }
+.btnRevive:hover { background: rgba(39,174,96,.35); }
+.btnRemove { background: var(--bg-hover); border: 1px solid var(--border-md); color: var(--text-3); margin-left: auto; }
+.btnRemove:hover { color: #e74c3c; border-color: rgba(192,57,43,.4); }
+/* Contenedor de botones ↑ ↓ */
+.orderControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+/* Botones individuales de orden */
+.orderBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-3);
+  font-size: 10px;
+  line-height: 1;
+  padding: 1px 4px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.orderBtn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-1);
+  border-color: var(--border-md);
+}
+
+.orderBtn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+/* Badge de iniciativa con orden manual activo */
+.initManual {
+  border: 1px dashed var(--gold-dim) !important;
+  opacity: 0.75;
+}
+
+/* ─── Botón "↺ Orden" en el header de App ────────────────────────────────── */
+/* (agregar también en App.module.css) */
+.btnWarn {
+  background: rgba(230, 126, 34, 0.12);
+  border: 1px solid rgba(230, 126, 34, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  color: #e67e22;
+  font-size: 12px;
+  font-weight: 500;
+}
+.btnWarn:hover {
+  background: rgba(230, 126, 34, 0.22);
+}

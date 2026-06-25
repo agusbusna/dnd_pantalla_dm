@@ -1,0 +1,23 @@
+.wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  background: var(--bg-raised);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-md);
+  padding: 5px 16px;
+}
+.label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--gold-dim);
+  font-weight: 500;
+}
+.number {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
