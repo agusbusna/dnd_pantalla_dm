@@ -1,64 +1,45 @@
 /**
- * App.jsx — Layout principal del Combat Tracker
- *
- * Etapa 2: agrega botón "📖 Bestiario" en el header y panel de bestiario
- * que se abre/cierra igual que el panel de Añadir.
+ * App.jsx — Etapa 3: agrega panel de Personajes y Aliados
  */
 
 import { useState } from 'react'
 import { useCombat } from './hooks/useCombat'
 import Bestiary from './features/bestiary/Bestiary'
+import Characters from './features/characters/Characters'
 import CombatantRow from './components/CombatantRow'
 import AddCombatantPanel from './components/AddCombatantPanel'
 import RoundBanner from './components/RoundBanner'
 import styles from './App.module.css'
 
+// Solo un panel puede estar abierto a la vez
+const PANELS = { none: 'none', add: 'add', bestiary: 'bestiary', characters: 'characters' }
+
 export default function App() {
-  const [showAdd, setShowAdd]           = useState(false)
-  const [showBestiary, setShowBestiary] = useState(false)
+  const [openPanel, setOpenPanel] = useState(PANELS.none)
 
   const {
-    sortedList,
-    round,
-    activeTurn,
-    saveStatus,
-    nextTurn,
-    prevTurn,
-    updateCombatant,
-    removeCombatant,
-    addCombatant,
+    sortedList, round, activeTurn, saveStatus,
+    nextTurn, prevTurn,
+    updateCombatant, removeCombatant, addCombatant,
     addCreatureFromBestiary,
-    moveCombatantInOrder,
-    resetOrder,
-    rollInitiative,
-    resetCombat,
+    moveCombatantInOrder, resetOrder,
+    rollInitiative, resetCombat,
   } = useCombat()
 
   const hasManualOrder = sortedList.some(c => c.order !== undefined)
 
-  function handleAdd(data) {
-    addCombatant(data)
-    setShowAdd(false)
+  function toggle(panel) {
+    setOpenPanel(prev => prev === panel ? PANELS.none : panel)
   }
 
-  function handleAddFromBestiary(creature, count) {
-    addCreatureFromBestiary(creature, count)
-    // No cerramos el bestiario para que el DM pueda seguir añadiendo
+  function handleAdd(data) {
+    addCombatant(data)
+    setOpenPanel(PANELS.none)
   }
 
   function handleReset() {
     if (!window.confirm('¿Reiniciar el combate? Se restaurará el HP y se borrarán condiciones.')) return
     resetCombat()
-  }
-
-  function toggleBestiary() {
-    setShowBestiary(v => !v)
-    if (showAdd) setShowAdd(false)  // cierra el panel de añadir si estaba abierto
-  }
-
-  function toggleAdd() {
-    setShowAdd(v => !v)
-    if (showBestiary) setShowBestiary(false)  // cierra el bestiario si estaba abierto
   }
 
   return (
@@ -81,32 +62,32 @@ export default function App() {
               {saveStatus === 'saved' ? '✓ Guardado' : '✗ Error'}
             </span>
           )}
-
           {hasManualOrder && (
-            <button
-              className={styles.btnWarn}
-              onClick={resetOrder}
-              title="Volver al ordenamiento automático por iniciativa"
-            >
+            <button className={styles.btnWarn} onClick={resetOrder} title="Volver al orden por iniciativa">
               ↺ Orden
             </button>
           )}
-
-          <button className={styles.btnGhost} onClick={rollInitiative} title="Tirar iniciativa para todos">
-            🎲 Iniciativa
-          </button>
-          <button className={styles.btnGhost} onClick={handleReset} title="Reiniciar combate">
-            ↺ Reiniciar
+          <button className={styles.btnGhost} onClick={rollInitiative}>🎲 Iniciativa</button>
+          <button className={styles.btnGhost} onClick={handleReset}>↺ Reiniciar</button>
+          <button
+            className={openPanel === PANELS.characters ? styles.btnGold : styles.btnGhost}
+            onClick={() => toggle(PANELS.characters)}
+            title="Biblioteca de personajes y aliados"
+          >
+            🧙 Personajes
           </button>
           <button
-            className={showBestiary ? styles.btnGold : styles.btnGhost}
-            onClick={toggleBestiary}
+            className={openPanel === PANELS.bestiary ? styles.btnGold : styles.btnGhost}
+            onClick={() => toggle(PANELS.bestiary)}
             title="Biblioteca de criaturas"
           >
             📖 Bestiario
           </button>
-          <button className={styles.btnGold} onClick={toggleAdd}>
-            {showAdd ? '✕ Cancelar' : '+ Añadir'}
+          <button
+            className={styles.btnGold}
+            onClick={() => toggle(PANELS.add)}
+          >
+            {openPanel === PANELS.add ? '✕ Cancelar' : '+ Añadir'}
           </button>
         </div>
       </header>
@@ -128,22 +109,32 @@ export default function App() {
       {/* ── Main ── */}
       <main className={styles.main}>
 
-        {showBestiary && (
-          <Bestiary
-            onAddToCombat={handleAddFromBestiary}
-            onClose={() => setShowBestiary(false)}
+        {openPanel === PANELS.characters && (
+          <Characters
+            onAddToCombat={addCreatureFromBestiary}
+            onClose={() => setOpenPanel(PANELS.none)}
           />
         )}
 
-        {showAdd && (
-          <AddCombatantPanel onAdd={handleAdd} onCancel={() => setShowAdd(false)} />
+        {openPanel === PANELS.bestiary && (
+          <Bestiary
+            onAddToCombat={addCreatureFromBestiary}
+            onClose={() => setOpenPanel(PANELS.none)}
+          />
+        )}
+
+        {openPanel === PANELS.add && (
+          <AddCombatantPanel
+            onAdd={handleAdd}
+            onCancel={() => setOpenPanel(PANELS.none)}
+          />
         )}
 
         {sortedList.length === 0 ? (
           <div className={styles.empty}>
             <span className={styles.emptyIcon}>⚔</span>
             <p>No hay participantes en el combate.</p>
-            <button className={styles.btnGold} onClick={() => setShowAdd(true)}>
+            <button className={styles.btnGold} onClick={() => setOpenPanel(PANELS.add)}>
               Añadir combatiente
             </button>
           </div>
@@ -165,7 +156,6 @@ export default function App() {
           </section>
         )}
       </main>
-
     </div>
   )
 }
