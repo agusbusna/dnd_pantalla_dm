@@ -6,10 +6,14 @@
  *   b) Facilitar las pestañas múltiples de la Etapa 5 (un hook por pestaña)
  *   c) Facilitar los tests unitarios de la lógica
  *
- * El guardado automático usa debounce de 800ms, igual que antes.
+ * Consumo: las páginas NO llaman a este hook directamente — lo hace
+ * `context/CombatContext.jsx`, que lo distribuye vía `useCombatContext()`.
+ *
+ * El guardado automático usa debounce de 800ms y no arranca hasta terminar
+ * la carga inicial (evita pisar los datos guardados con los defaults).
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { sortedCombatants, moveCombatant, clearOrders } from '../lib/sort'
 import { loadCombat, saveCombat } from '../lib/storage'
 
@@ -30,18 +34,44 @@ const DEFAULT_COMBATANTS = [
   },
 ]
 
+/**
+ * Copia de un template (bestiario/personaje/encuentro) lista para entrar
+ * al combate: stats del template + estado de combate a cero.
+ */
+function buildCopy(creature, id, suffix = '') {
+  return {
+    ...creature,
+    id,
+    name: creature.name + suffix,
+    // Templates sin init (bestiario/personajes) → default 0 para que el sort
+    // no reciba NaN. La tira "🎲 Iniciativa" reparte los valores reales.
+    init: Number.isFinite(creature.init) ? creature.init : 0,
+    hpLeft: creature.hpMax,
+    conditions: [],
+    expanded: false,
+    dead: false,
+    spellUsed: {},
+    order: undefined,   // se ordenará por iniciativa
+  }
+}
+
 export function useCombat(combatId = 'default') {
   const [combatants, setCombatants] = useState(DEFAULT_COMBATANTS)
   const [round, setRound]           = useState(1)
   const [activeTurn, setActiveTurn] = useState(0)
   const [nextId, setNextId]         = useState(20)
   const [saveStatus, setSaveStatus] = useState(null)   // null | 'saved' | 'error'
+  const [loaded, setLoaded]         = useState(false)  // true cuando terminó la carga inicial
   const saveTimer = useRef(null)
 
   // ─── Persistencia ────────────────────────────────────────────────────────
 
   useEffect(() => {
+    let cancelled = false
+    setLoaded(false)   // si cambia el combatId, esperar la nueva carga
+
     loadCombat(combatId).then(res => {
+      if (cancelled) return
       if (res.ok && res.data) {
         const d = res.data
         if (d.combatants)            setCombatants(d.combatants)
@@ -49,8 +79,10 @@ export function useCombat(combatId = 'default') {
         if (d.activeTurn !== undefined) setActiveTurn(d.activeTurn)
         if (d.nextId)                setNextId(d.nextId)
       }
+      setLoaded(true)
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => { cancelled = true }
   }, [combatId])
 
   const autoSave = useCallback((data) => {
@@ -62,13 +94,19 @@ export function useCombat(combatId = 'default') {
     }, 800)
   }, [])
 
+  // No guardar hasta terminar la carga: si no, los valores por defecto
+  // pisarían lo guardado (carrera entre la carga y el debounce de 800ms).
   useEffect(() => {
+    if (!loaded) return
     autoSave({ combatants, round, activeTurn, nextId })
-  }, [combatants, round, activeTurn, nextId, autoSave])
+  }, [combatants, round, activeTurn, nextId, loaded, autoSave])
+
+  // Limpia el timer de guardado al desmontar
+  useEffect(() => () => clearTimeout(saveTimer.current), [])
 
   // ─── Lista ordenada (derivada, no estado) ────────────────────────────────
 
-  const sortedList = sortedCombatants(combatants)
+  const sortedList = useMemo(() => sortedCombatants(combatants), [combatants])
 
   // ─── Navegación de turnos ────────────────────────────────────────────────
 
@@ -89,6 +127,7 @@ export function useCombat(combatId = 'default') {
 
   function prevTurn() {
     const len = sortedList.length
+    if (!len) return
     let idx = activeTurn
     let tries = 0
     do {
@@ -104,9 +143,26 @@ export function useCombat(combatId = 'default') {
     setCombatants(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c))
   }
 
+  /**
+   * Elimina un combatiente sin robarle el turno a nadie:
+   *   • si el activo sigue en pie, su índice baja si el eliminado estaba antes
+   *   • si se eliminó al activo, el siguiente en el orden ocupa su lugar
+   *   • si la lista queda vacía, el turno vuelve a 0
+   */
   function removeCombatant(id) {
-    setCombatants(prev => prev.filter(c => c.id !== id))
-    setActiveTurn(0)
+    const removedIdx = sortedList.findIndex(c => c.id === id)
+    const next = combatants.filter(c => c.id !== id)
+    setCombatants(next)
+
+    if (next.length === 0) {
+      setActiveTurn(0)
+      return
+    }
+
+    let idx = activeTurn
+    if (removedIdx !== -1 && removedIdx < activeTurn) idx = activeTurn - 1
+    if (idx >= next.length) idx = 0
+    setActiveTurn(idx)
   }
 
   function addCombatant(data) {
@@ -119,31 +175,43 @@ export function useCombat(combatId = 'default') {
   }
 
   /**
+   * Añade varios grupos `{ creature, count }` en un único update atómico
+   * con ids correlativos.
+   *
+   * Hace falta para "Cargar encuentro": varias especies en un solo clic.
+   * Si se llamara a addCreatureFromBestiary() varias veces en el mismo
+   * handler, todas leerían el mismo `nextId` del cierre y se pisarían los ids.
+   *
+   * @param {Array<{creature: Object, count: number}>} groups
+   */
+  function addCreatures(groups) {
+    const total = groups.reduce((sum, g) => sum + (g.count || 0), 0)
+    if (!total) return
+
+    const baseId = nextId
+    setNextId(n => n + total)
+    setCombatants(prev => {
+      const copies = []
+      let id = baseId
+      for (const { creature, count } of groups) {
+        for (let i = 0; i < count; i++) {
+          const suffix = count > 1 ? ` ${i + 1}` : ''
+          copies.push(buildCopy(creature, id++, suffix))
+        }
+      }
+      return [...prev, ...copies]
+    })
+  }
+
+  /**
    * Añade múltiples copias de una criatura desde el bestiario.
    * Cada copia es independiente (HP, condiciones, estado propios).
-   * Etapa 2.
    *
    * @param {Object} creature   - Datos de la criatura del bestiario
    * @param {number} count      - Cantidad de copias (por defecto 1)
    */
   function addCreatureFromBestiary(creature, count = 1) {
-    const copies = Array.from({ length: count }, (_, i) => {
-      const id = nextId + i
-      const suffix = count > 1 ? ` ${i + 1}` : ''
-      return {
-        ...creature,
-        id,
-        name: creature.name + suffix,
-        hpLeft: creature.hpMax,
-        conditions: [],
-        expanded: false,
-        dead: false,
-        spellUsed: {},
-        order: undefined,   // se ordenará por iniciativa
-      }
-    })
-    setNextId(n => n + count)
-    setCombatants(prev => [...prev, ...copies])
+    addCreatures([{ creature, count }])
   }
 
   // ─── Reordenamiento manual ───────────────────────────────────────────────
@@ -195,6 +263,7 @@ export function useCombat(combatId = 'default') {
     round,
     activeTurn,
     saveStatus,
+    loaded,
 
     // Turnos
     nextTurn,
@@ -204,6 +273,7 @@ export function useCombat(combatId = 'default') {
     updateCombatant,
     removeCombatant,
     addCombatant,
+    addCreatures,
     addCreatureFromBestiary,
 
     // Reordenamiento

@@ -4,8 +4,17 @@ const fs = require('fs')
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
 
-// Data persistence path
-const dataPath = path.join(app.getPath('userData'), 'combat-state.json')
+// Data persistence: un archivo por entidad (combat, bestiary, characters…)
+const dataDir = path.join(app.getPath('userData'), 'data')
+const legacyPath = path.join(app.getPath('userData'), 'combat-state.json')
+
+function entityPath(entity = 'combat') {
+  // Whitelist: el nombre viene del renderer, no debe escapar de dataDir
+  if (!/^[a-z0-9_-]+$/i.test(entity)) {
+    throw new Error(`Entidad inválida: ${entity}`)
+  }
+  return path.join(dataDir, `${entity}.json`)
+}
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -31,23 +40,34 @@ function createWindow() {
   }
 }
 
-// IPC: save state
-ipcMain.handle('save-state', async (_, data) => {
+// IPC: save state (un archivo por entidad)
+ipcMain.handle('save-state', async (_, data, entity) => {
   try {
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2), 'utf-8')
+    fs.mkdirSync(dataDir, { recursive: true })
+    fs.writeFileSync(entityPath(entity), JSON.stringify(data, null, 2), 'utf-8')
     return { ok: true }
   } catch (e) {
     return { ok: false, error: e.message }
   }
 })
 
-// IPC: load state
-ipcMain.handle('load-state', async () => {
+// IPC: load state (un archivo por entidad)
+ipcMain.handle('load-state', async (_, entity) => {
   try {
-    if (fs.existsSync(dataPath)) {
-      const raw = fs.readFileSync(dataPath, 'utf-8')
-      return { ok: true, data: JSON.parse(raw) }
+    const target = entityPath(entity)
+    if (fs.existsSync(target)) {
+      return { ok: true, data: JSON.parse(fs.readFileSync(target, 'utf-8')) }
     }
+
+    // Migración: versiones anteriores guardaban TODO en un único archivo.
+    // Solo se migra si el contenido parece un estado de combate.
+    if ((entity === 'combat' || !entity) && fs.existsSync(legacyPath)) {
+      const legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf-8'))
+      if (legacy && typeof legacy === 'object' && !Array.isArray(legacy) && 'combatants' in legacy) {
+        return { ok: true, data: legacy }
+      }
+    }
+
     return { ok: true, data: null }
   } catch (e) {
     return { ok: false, error: e.message }

@@ -5,7 +5,8 @@
  *   • Recibe isFirst, isLast, onMoveUp, onMoveDown como props
  *   • Botones ↑ ↓ en el header de la fila para reordenamiento manual
  *   • El badge de iniciativa muestra un indicador visual cuando hay orden manual
- *   • Sin otros cambios funcionales
+ *   • Acciones rápidas de daño/curación en la tarjeta COMPRIMIDA: campo de
+ *     cantidad + botones 💥/💚 junto al HP, sin abrir el detalle
  */
 
 import { useState } from 'react'
@@ -40,26 +41,46 @@ export default function CombatantRow({
 }) {
   const [dmgVal, setDmgVal] = useState('')
   const [healVal, setHealVal] = useState('')
+  const [quickVal, setQuickVal] = useState('')  // cantidad rápida (tarjeta comprimida)
   const [condSel, setCondSel] = useState('')
 
   const pct = hpPct(c)
   const col = hpColor(pct)
   const hasManualOrder = c.order !== undefined
 
+  /** Baja HP (mínimo 0); al llegar a 0 marca muerte. */
+  function dealDamage(v) {
+    const newHp = Math.max(0, c.hpLeft - v)
+    onUpdate({ hpLeft: newHp, dead: newHp === 0 ? true : c.dead })
+  }
+
+  /** Sube HP (máximo hpMax) y revierte la muerte. */
+  function healAmount(v) {
+    const newHp = Math.min(c.hpMax || 9999, c.hpLeft + v)
+    onUpdate({ hpLeft: newHp, dead: false })
+  }
+
   function applyDmg() {
     const v = parseInt(dmgVal)
     if (!v || v <= 0) return
-    const newHp = Math.max(0, c.hpLeft - v)
-    onUpdate({ hpLeft: newHp, dead: newHp === 0 ? true : c.dead })
+    dealDamage(v)
     setDmgVal('')
   }
 
   function applyHeal() {
     const v = parseInt(healVal)
     if (!v || v <= 0) return
-    const newHp = Math.min(c.hpMax || 9999, c.hpLeft + v)
-    onUpdate({ hpLeft: newHp, dead: false })
+    healAmount(v)
     setHealVal('')
+  }
+
+  /** 💥/💚 del header: un mismo campo de cantidad para ambas acciones. */
+  function applyQuick(kind) {
+    const v = parseInt(quickVal)
+    if (!v || v <= 0) return
+    if (kind === 'dmg') dealDamage(v)
+    else healAmount(v)
+    setQuickVal('')
   }
 
   function addCond() {
@@ -125,11 +146,38 @@ export default function CombatantRow({
           )}
         </div>
 
-        {/* HP */}
+        {/* HP + acciones rápidas (tarjeta comprimida) */}
         <div className={styles.hpBlock}>
           <div className={styles.hpText}>
             <span style={{ color: col }}>{c.hpLeft}</span>
             <span className={styles.hpMax}>/{c.hpMax || '?'}</span>
+
+            {/* Daño/curación sin expandir — no debe abrir la tarjeta */}
+            <div className={styles.quickBar} onClick={e => e.stopPropagation()}>
+              <input
+                type="number" min="1" placeholder="Nº"
+                className={styles.quickInput}
+                value={quickVal}
+                onChange={e => setQuickVal(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && applyQuick('dmg')}
+                title="Cantidad rápida — Enter aplica daño"
+                aria-label="Cantidad de daño o curación"
+              />
+              <button
+                className={styles.quickDmg}
+                onClick={() => applyQuick('dmg')}
+                title="Aplicar daño"
+              >
+                💥
+              </button>
+              <button
+                className={styles.quickHeal}
+                onClick={() => applyQuick('heal')}
+                title="Aplicar curación"
+              >
+                💚
+              </button>
+            </div>
           </div>
           <div className={styles.hpBarBg}>
             <div className={styles.hpBarFill} style={{ width: `${pct}%`, background: col }} />

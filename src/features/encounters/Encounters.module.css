@@ -1,0 +1,493 @@
+/* ─── Encounters.module.css ───────────────────────────────────────────────── */
+
+/* Panel contenedor: ocupa TODA la altura de la pestaña (sin combate debajo) */
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header del panel */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+
+.panelHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnNew {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnNew:hover { background: rgba(201,168,76,0.28); }
+
+.btnClose {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+  color: var(--text-3);
+  font-size: 13px;
+  cursor: pointer;
+}
+.btnClose:hover { color: var(--text-1); background: var(--bg-hover); }
+
+/* ─── Búsqueda ───────────────────────────────────────────────────────────── */
+
+.searchBar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  color: var(--text-1);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+.searchInput:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+}
+
+/* ─── Lista de encuentros ────────────────────────────────────────────────── */
+
+/* Lista: scroll interno, el panel nunca se pasa de la altura de la pestaña */
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.encRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--gold-dim);
+  transition: background 0.1s;
+}
+.encRow:last-child { border-bottom: none; }
+.encRow:hover { background: var(--bg-hover); }
+
+.encInfo {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.encName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.encDate {
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.encEntries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.entryChip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.chip_enemy  { background: var(--red-dim);   color: #e74c3c; border: 1px solid rgba(192,57,43,0.35); }
+.chip_ally   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(39,174,96,0.35); }
+.chip_player { background: var(--blue-dim);  color: var(--blue); border: 1px solid rgba(41,128,185,0.35); }
+
+.encNotes {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Controles del encuentro */
+.encControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.encTotal {
+  font-size: 11px;
+  color: var(--text-3);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  min-width: 22px;
+  text-align: center;
+}
+
+.btnLoad {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btnLoad:hover { background: rgba(201,168,76,0.28); }
+
+.btnEdit {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 7px;
+  color: var(--text-3);
+  font-size: 12px;
+  cursor: pointer;
+}
+.btnEdit:hover { color: var(--text-1); border-color: var(--border-md); background: var(--bg-hover); }
+
+.btnDelete {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 7px;
+  color: var(--text-3);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btnDelete:hover { color: #e74c3c; border-color: rgba(192,57,43,0.5); }
+
+.btnDeleteConfirm {
+  background: var(--red-dim);
+  border-color: rgba(192,57,43,0.5);
+  color: #e74c3c;
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.panelFooter {
+  padding: 6px 16px;
+  font-size: 11px;
+  color: var(--text-3);
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+}
+
+/* ─── Formulario de encuentro ────────────────────────────────────────────── */
+
+.formPanel {
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+}
+
+.formTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 12px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(200px, 2fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.formField,
+.formFieldWide {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formField label,
+.formFieldWide label {
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.formField input,
+.formFieldWide input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  color: var(--text-1);
+  font-size: 13px;
+}
+.formField input:focus,
+.formFieldWide input:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+}
+
+/* Selector de seres */
+.pickerBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.pickerSelect {
+  flex: 1;
+  min-width: 200px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  color: var(--text-1);
+  font-size: 13px;
+}
+.pickerSelect:focus { outline: none; border-color: var(--gold-dim); }
+
+.pickerCount {
+  width: 48px;
+  text-align: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 4px;
+  color: var(--text-1);
+  font-size: 13px;
+}
+/* Ver nota de .addGroup .countInput en Bestiary.module.css: el ancho fijo
+   necesita ganarle a `input[type=number] { width: 100% }` de index.css */
+.pickerBar .pickerCount { width: 48px; }
+
+.btnAddEntry {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btnAddEntry:hover:not(:disabled) { background: rgba(201,168,76,0.28); }
+.btnAddEntry:disabled { opacity: 0.4; cursor: default; }
+
+.btnFromCombat {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btnFromCombat:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-1); }
+.btnFromCombat:disabled { opacity: 0.4; cursor: default; }
+
+/* Lista de entradas del encuentro */
+.entriesBox {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  margin-bottom: 12px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.entriesEmpty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.entryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.entryRow:last-child { border-bottom: none; }
+
+.entryBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.badge_enemy  { background: var(--red-dim);   color: #e74c3c; border: 1px solid rgba(192,57,43,0.35); }
+.badge_ally   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(39,174,96,0.35); }
+.badge_player { background: var(--blue-dim);  color: var(--blue); border: 1px solid rgba(41,128,185,0.35); }
+
+.entryName {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.entryStats {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entryCountGroup {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.countBtn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-md);
+  border-radius: 3px;
+  width: 22px;
+  height: 22px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.countBtn:hover:not(:disabled) { color: var(--text-1); }
+.countBtn:disabled { opacity: 0.3; cursor: default; }
+
+.countInput {
+  width: 42px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-md);
+  border-radius: 3px;
+  padding: 2px 4px;
+  color: var(--text-1);
+  font-size: 12px;
+}
+.entryCountGroup .countInput { width: 42px; }
+.countInput::-webkit-inner-spin-button,
+.countInput::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.entryRemove {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 7px;
+  color: var(--text-3);
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.entryRemove:hover { color: #e74c3c; border-color: rgba(192,57,43,0.5); }
+
+/* Acciones del formulario */
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnSave {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnSave:hover:not(:disabled) { background: rgba(201,168,76,0.28); }
+.btnSave:disabled { opacity: 0.4; cursor: default; }
+
+.btnCancel {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+.btnCancel:hover { background: var(--bg-hover); color: var(--text-1); }
+
+.formHint {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+@media (max-width: 700px) {
+  .formGrid { grid-template-columns: 1fr; }
+}

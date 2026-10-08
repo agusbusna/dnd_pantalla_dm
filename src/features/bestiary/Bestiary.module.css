@@ -1,11 +1,14 @@
 /* ─── Bestiary.module.css ──────────────────────────────────────────────────── */
 
-/* Panel contenedor principal */
+/* Panel contenedor: ocupa TODA la altura de la pestaña (sin combate debajo) */
 .panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  margin-bottom: 16px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -107,8 +110,10 @@
 
 /* ─── Lista de criaturas ─────────────────────────────────────────────────── */
 
+/* Lista: scroll interno, el panel nunca se pasa de la altura de la pestaña */
 .list {
-  max-height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -238,6 +243,9 @@
   color: var(--text-1);
   font-size: 12px;
 }
+/* Ancla el ancho: `input[type=number]` de index.css (0,1,1) ganaría a una
+   sola clase (0,1,0) y dejaría el input en su ancho por defecto (~170px) */
+.addGroup .countInput { width: 36px; }
 /* Ocultar flechas del input number */
 .countInput::-webkit-inner-spin-button,
 .countInput::-webkit-outer-spin-button { -webkit-appearance: none; }

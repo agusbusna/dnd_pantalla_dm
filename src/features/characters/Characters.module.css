@@ -1,10 +1,14 @@
 /* ─── Characters.module.css ────────────────────────────────────────────────── */
 
+/* Panel contenedor: ocupa TODA la altura de la pestaña (sin combate debajo) */
 .panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  margin-bottom: 16px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -97,8 +101,10 @@
 }
 
 /* ── Lista ── */
+/* Scroll interno: el panel nunca se pasa de la altura de la pestaña */
 .list {
-  max-height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 

@@ -4,6 +4,7 @@
   --bg-base:     #0f0f10;
   --bg-surface:  #17171a;
   --bg-raised:   #1e1e23;
+  --bg-input:    #121215;
   --bg-hover:    #26262d;
   --border:      rgba(255,255,255,0.08);
   --border-md:   rgba(255,255,255,0.14);
@@ -25,6 +26,7 @@
   --radius-sm:   6px;
   --radius-md:   10px;
   --radius-lg:   14px;
+  --radius:      10px;  /* alias usado por los paneles (.panel) */
   --font-display: 'Cinzel', serif;
   --font-body:    'Inter', system-ui, sans-serif;
 }

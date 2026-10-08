@@ -1,13 +1,16 @@
 /**
  * Characters.jsx — Panel de biblioteca de personajes y aliados
  *
- * Props:
- *   onAddToCombat  {Function}  — (character, count) => void
- *   onClose        {Function}  — () => void
+ * No recibe props: todo sale de los contextos
+ * (Characters → lista/CRUD, Combat → añadir al combate, UI → pestaña activa).
+ * Se muestra como pestaña completa: el combate no aparece debajo.
  */
 
 import { useState } from 'react'
-import { useCharacters, abilityMod } from './useCharacters'
+import { useCharactersContext } from '../../context/CharactersContext'
+import { useCombatContext } from '../../context/CombatContext'
+import { useUIContext } from '../../context/UIContext'
+import { abilityMod } from './useCharacters'
 import CharacterForm from './CharacterForm'
 import styles from './Characters.module.css'
 
@@ -20,13 +23,16 @@ const FILTER_OPTS = [
 const ABILITIES = ['str','dex','con','int','wis','cha']
 const ABILITY_LABELS = { str:'FUE', dex:'DES', con:'CON', int:'INT', wis:'SAB', cha:'CAR' }
 
-export default function Characters({ onAddToCombat, onClose }) {
+export default function Characters() {
   const {
     filtered, loaded,
     search, setSearch,
     filterType, setFilterType,
     addCharacter, updateCharacter, deleteCharacter,
-  } = useCharacters()
+  } = useCharactersContext()
+
+  const { addCreatureFromBestiary } = useCombatContext()
+  const { goToCombat } = useUIContext()
 
   const [editing, setEditing]       = useState(null)   // character | 'new' | null
   const [confirmDel, setConfirmDel] = useState(null)
@@ -65,7 +71,7 @@ export default function Characters({ onAddToCombat, onClose }) {
           <button className={styles.btnNew} onClick={() => setEditing('new')}>
             + Nuevo
           </button>
-          <button className={styles.btnClose} onClick={onClose}>✕</button>
+          <button className={styles.btnClose} onClick={goToCombat} title="Volver a la pestaña Combate">✕</button>
         </div>
       </div>
 
@@ -143,7 +149,7 @@ export default function Characters({ onAddToCombat, onClose }) {
                 <div className={styles.charControls}>
                   <button
                     className={styles.btnAddCombat}
-                    onClick={() => onAddToCombat(ch, 1)}
+                    onClick={() => addCreatureFromBestiary(ch, 1)}
                     title="Añadir al combate"
                   >
                     ⚔ Añadir

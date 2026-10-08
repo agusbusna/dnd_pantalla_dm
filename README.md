@@ -39,17 +39,30 @@ NODE_ENV=production npm run electron
 ```
 dnd-tracker/
 ├── electron/
-│   ├── main.js        ← Proceso principal de Electron
+│   ├── main.js        ← Proceso principal (un archivo de datos por entidad)
 │   └── preload.js     ← Puente IPC seguro (contextBridge)
 ├── src/
-│   ├── components/
-│   │   ├── CombatantRow.jsx      ← Fila de cada combatiente
-│   │   ├── AddCombatantPanel.jsx ← Panel para agregar
-│   │   └── RoundBanner.jsx       ← Contador de rondas
-│   ├── App.jsx        ← Lógica principal y estado
+│   ├── context/       ← React Context por dominio (estado global)
+│   │   ├── AppProviders.jsx
+│   │   ├── UIContext.jsx        ← pestaña activa (Combate/Encuentros/Personajes/Bestiario)
+│   │   ├── CombatContext.jsx    ← combate activo
+│   │   ├── BestiaryContext.jsx  ← bestiario
+│   │   ├── CharactersContext.jsx← personajes y aliados
+│   │   └── EncountersContext.jsx← encuentros guardados
+│   ├── hooks/
+│   │   └── useCombat.js         ← lógica del combate
+│   ├── lib/
+│   │   ├── sort.js              ← orden de iniciativa
+│   │   └── storage.js           ← persistencia (Electron / localStorage)
+│   ├── components/              ← componentes reutilizables (solo props)
+│   ├── features/                ← una carpeta por página/funcionalidad
+│   │   ├── bestiary/
+│   │   ├── characters/
+│   │   └── encounters/
+│   ├── App.jsx                  ← layout principal
 │   ├── App.module.css
-│   ├── index.css      ← Variables globales / tema oscuro
-│   └── main.jsx
+│   ├── index.css                ← variables globales / tema oscuro
+│   └── main.jsx                 ← monta <AppProviders><App />
 ├── index.html
 ├── package.json
 └── vite.config.js
@@ -57,16 +70,22 @@ dnd-tracker/
 
 ## Features
 
-- **Orden de iniciativa** automático (ordenado de mayor a menor)
+- **Orden de iniciativa** automático (ordenado de mayor a menor) + reordenamiento manual ↑ ↓
 - **Gestión de HP** con daño, curación y barra visual
-- **Tirada de iniciativa** aleatoria con bonus por combatiente
+- **Tirada de iniciativa** aleatoria por combatiente
 - **Condiciones** D&D 5e (cegado, paralizado, etc.) — click para quitar
 - **Espacios de conjuro** con pips visuales y reset por descanso largo
-- **Auto-guardado** en Electron (carpeta userData del sistema)
-- **Estado persistente** entre sesiones cuando se usa como app Electron
+- **Bestiario** con búsqueda, filtro y alta/baja de criaturas
+- **Personajes y aliados** con atributos (FUE/DES/CON/INT/SAB/CAR)
+- **Encuentros guardados**: crear plantillas (desde el combate actual o el
+  bestiario), editarlas y cargarlas al combate de una sola vez
+- **Auto-guardado** con debounce de 800ms en todas las entidades
+- **Estado persistente** entre sesiones (localStorage en navegador,
+  `userData/data/` en Electron)
 
 ## Notas
 
-- En modo navegador el estado se pierde al refrescar (no hay persistencia)
-- En modo Electron el estado se guarda automáticamente cada 800ms
+- En modo navegador el estado se guarda en `localStorage` (sobrevive al refrescar)
+- En modo Electron cada entidad tiene su archivo en la carpeta `userData/data/`
 - La fuente de display es Cinzel (Google Fonts) — requiere conexión en el primer uso
+- Arquitectura y roadmap detallados en `Document.md`

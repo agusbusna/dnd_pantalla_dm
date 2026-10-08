@@ -63,6 +63,39 @@
 .hpBarBg { height: 15px; background: var(--bg-hover); overflow: hidden; }
 .hpBarFill { height: 100%; transition: width .3s, background .3s; }
 
+/* ── Acciones rápidas: cantidad + 💥/💚 en la tarjeta comprimida ── */
+/* Encajan en el hueco a la derecha del número de HP (bloque de 300px) */
+.quickBar {
+  margin-left: auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+/* Specificity (0,2,0) para ganarle a input[type=number] de index.css */
+.quickBar .quickInput {
+  width: 54px;
+  height: 24px;
+  padding: 0 5px;
+  font-size: 12px;
+  text-align: center;
+}
+.quickDmg, .quickHeal {
+  width: 27px;
+  height: 24px;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.quickDmg { background: var(--red-dim); border: 1px solid rgba(192,57,43,.4); }
+.quickDmg:hover { background: rgba(192,57,43,.4); }
+.quickHeal { background: var(--green-dim); border: 1px solid rgba(39,174,96,.4); }
+.quickHeal:hover { background: rgba(39,174,96,.35); }
+
 .chips { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
 .chip {
   background: var(--bg-raised);

@@ -8,13 +8,15 @@
  *   • Botones editar y eliminar por criatura
  *   • Formulario de creación/edición inline
  *
- * Props:
- *   onAddToCombat  {Function}  — (creature, count) => void  (viene de useCombat)
- *   onClose        {Function}  — () => void
+ * No recibe props: todo sale de los contextos
+ * (Bestiary → lista/CRUD, Combat → añadir al combate, UI → pestaña activa).
+ * Se muestra como pestaña completa: el combate no aparece debajo.
  */
 
 import { useState } from 'react'
-import { useBestiary } from './useBestiary'
+import { useBestiaryContext } from '../../context/BestiaryContext'
+import { useCombatContext } from '../../context/CombatContext'
+import { useUIContext } from '../../context/UIContext'
 import CreatureForm from './CreatureForm'
 import styles from './Bestiary.module.css'
 
@@ -31,13 +33,16 @@ const TYPE_FILTER_OPTIONS = [
   { value: 'player', label: 'PJs' },
 ]
 
-export default function Bestiary({ onAddToCombat, onClose }) {
+export default function Bestiary() {
   const {
     filtered, loaded,
     search, setSearch,
     filterType, setFilterType,
     addCreature, updateCreature, deleteCreature,
-  } = useBestiary()
+  } = useBestiaryContext()
+
+  const { addCreatureFromBestiary } = useCombatContext()
+  const { goToCombat } = useUIContext()
 
   const [counts, setCounts]         = useState({})
   const [editing, setEditing]       = useState(null)   // creature | 'new' | null
@@ -49,7 +54,7 @@ export default function Bestiary({ onAddToCombat, onClose }) {
   }
 
   function handleAdd(creature) {
-    onAddToCombat(creature, getCount(creature.id))
+    addCreatureFromBestiary(creature, getCount(creature.id))
     setCounts(prev => ({ ...prev, [creature.id]: 1 }))
   }
 
@@ -82,7 +87,7 @@ export default function Bestiary({ onAddToCombat, onClose }) {
           <button className={styles.btnNew} onClick={() => setEditing('new')}>
             + Nueva criatura
           </button>
-          <button className={styles.btnClose} onClick={onClose} title="Cerrar bestiario">
+          <button className={styles.btnClose} onClick={goToCombat} title="Volver a la pestaña Combate">
             ✕
           </button>
         </div>
